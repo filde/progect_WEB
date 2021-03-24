@@ -1,19 +1,27 @@
 import sqlalchemy
+import datetime
 from .db_session import SqlAlchemyBase
    
 
 association_table = sqlalchemy.Table(
-    'jobs_to_category',
+    'users_to_projects',
     SqlAlchemyBase.metadata,
-    sqlalchemy.Column('jobs', sqlalchemy.Integer,
+    sqlalchemy.Column('users', sqlalchemy.Integer,
                       sqlalchemy.ForeignKey('jobs.id')),
-    sqlalchemy.Column('category', sqlalchemy.Integer,
-                      sqlalchemy.ForeignKey('category.id'))
+    sqlalchemy.Column('projects', sqlalchemy.Integer,
+                      sqlalchemy.ForeignKey('projects.id'))
 )
 
    
-class Category(SqlAlchemyBase):
-    __tablename__ = 'category'
+class Projects(SqlAlchemyBase):
+    __tablename__ = 'projects'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, 
                            autoincrement=True)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    team_lead = sqlalchemy.Column(sqlalchemy.Integer, 
+                                  sqlalchemy.ForeignKey('users.id'))
+    count = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime, 
+                                     default=datetime.datetime.now)
+    about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    user = orm.relation('User')

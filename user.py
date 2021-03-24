@@ -19,7 +19,10 @@ class User(SqlAlchemyBase, UserMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, 
                                      default=datetime.datetime.now)
-    projects = orm.relation("Projects", back_populates='user')
+    project = orm.relation("Projects", back_populates='user')
+    projects = orm.relation('Projects',
+                              secondary='users_to_projects'
+                              backref='users')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
