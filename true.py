@@ -1,21 +1,9 @@
-    def reg(self): # действия, если пользователь нажал кнопку "Зарегистрироваться"
-        try:
-            log = self.login.text()
-            passw = self.password.text()
-            con = sqlite3.connect('datebase/results.db')
-            cur = con.cursor()
-            check_new_login(log, cur)
-            check_new_password(passw)
-            cur.execute("INSERT INTO users(name,password) VALUES('" + "','".join([log, passw]) + "')")
-            res = cur.execute("""SELECT id, name FROM users
-                     WHERE name = ?""", (log,)).fetchone()
-            con.commit()
-            con.close()
-            self.user += list(res)
-            self.out()
-        except LoginError as le:
-            self.error.setText(le.__str__())
-            con.close()
-        except PasswordError as pe:
-            self.error.setText(pe.__str__())
-            con.close()
+  def check_new_password(password): # проверяет подходит ли пароль пользователя требованиям системы
+    if len(password) < 9:
+        raise PasswordError('Пароль должен быть длиной более 8 символов')
+    if password.islower() or password.isupper() or not any(map(str.isalpha, password)):
+        raise PasswordError('В пароле долны быть хоят бы одна буква в верхнем регисте и одна в маленьком')
+    if not any(map(str.isdigit, password)):
+        raise PasswordError('В пароле должна быть хотя бы одна цифра')
+    if sequence(password.lower()):
+        raise PasswordError('В пароле не должно быть 3 идущих подряд на клавиатуре символа')
