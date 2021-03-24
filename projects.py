@@ -7,7 +7,7 @@ association_table = sqlalchemy.Table(
     'users_to_projects',
     SqlAlchemyBase.metadata,
     sqlalchemy.Column('users', sqlalchemy.Integer,
-                      sqlalchemy.ForeignKey('jobs.id')),
+                      sqlalchemy.ForeignKey('users.id')),
     sqlalchemy.Column('projects', sqlalchemy.Integer,
                       sqlalchemy.ForeignKey('projects.id'))
 )
@@ -25,3 +25,4 @@ class Projects(SqlAlchemyBase):
                                      default=datetime.datetime.now)
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     user = orm.relation('User')
+    active = sqlalchemy.Column(sqlalchemy.Boolean, default=True)
