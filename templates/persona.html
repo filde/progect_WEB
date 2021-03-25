@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a class="btn btn-secondary" href="/">Назад</a>
+    <h1 class="text-center">{{ user.surname }} {{user.name}}</h1>
+    <p>Почта: {{ user.email }}</p>
+    <p>Фамилия: {{ user.surname }}</p>
+    <p>Имя: {{ user.name }}</p>
+    <p>Возраст: {{ user.age }} лет</p>
+    <p>О себе:</p>
+    <p>{{ user.about }}</p>
+    {% if user == current_user %}
+        <a href="/edit_user" class="btn btn-success">Редактировать</a>
+        <a href="/projects" class="btn btn-success">Мои проекты</a>
+        <a href="/my_applications" class="btn btn-success">Мои заявки</a>
+    {% endif %}
+{% endblock %}

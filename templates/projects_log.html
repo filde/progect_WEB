@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="text-center">Проекты</h1>
+    {% for item in projects%}
+        <div>
+            <h3>{{ item.title }}</h3>
+            <p>Описание:</p>
+            <p>{{ item.about }}</p>
+            <p>Лидер: <a href='/persona/{{ item.team_lead }}'>{{ item.leader.surname }} {{ item.leader.name }}</a></p>
+            {% if current_user.is_authenticated and current_user in item.users %}
+                <p color="color: green">Вы являетесь участником проекта</p>
+            {% elif current_user.is_authenticated and current_user in item.applications%}
+                <p style="color: green;">Заявка отправлена</p>
+            {% elif current_user.is_authenticated and current_user != item.user %}
+                <a class='btn btn-success' href='/new_application/{{ item.id }}'>Подать заявку</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}

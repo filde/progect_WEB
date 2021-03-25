@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a class="btn btn-secondary" href="/persona/{{ current_user.id }}">Назад</a>
+    <h1 class="text-center">Проекты</h1>
+    {% for item in projects%}
+        <div>
+            <h3>{{ item.title }}</h3>
+            <p>Описание:</p>
+            <p>{{ item.about }}</p>
+            <p>Лидер: <a href="/persona/{{ item.team_lead }}">{{ item.leader.surname }} {{ item.leader.name }}</a></p>
+            {% if item.users %}
+            <p>Участники:</p>
+            <ol>
+                {% for i in item.users %}
+                <li><a href="/persona/{{ i.id }}">{{ i.surname }} {{i.name}}</a>
+                    <a class="btn btn-danger" href="/delete_member/{{ i.id }}/{{ item.id }}">Исключить</a>
+                </li>
+                {% endfor %}
+            </ol>
+            {% endif %}
+            {% if current_user.is_authenticated and current_user == item.user %}
+                {% if item.active %}
+                    <a class="btn btn-success" href="/applications/{{ item.id }}">Посмотреть заявки</a>
+                {% endif %}
+                <a class="btn btn-warning" href="/edit_project/{{ item.id }}">Редактировать</a>
+                <a class="btn btn-danger" href="/delete/{{ item.id }}">Удалить</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+    <a class="btn btn-success" href="/new_project">Новый проект</a>
+{% endblock %}

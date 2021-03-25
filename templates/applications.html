@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<a class="btn btn-secondary" href="/projects/{{ id }}">Назад</a>
+    <h1 class="text-center">Заявки на участие в проекте</h1>
+    {% for item in people%}
+        <div>
+            <h3>{{ item.surname }} {{ item.name }}</h3>
+            <p>Возраст: {{ item.age }} лет</p>
+            <p>Почта: {{item.email}}</p>
+            <p>О себе:</p>
+            <p>{{ item.about }}</p>
+            <a class="btn btn-success" href="/application_yes/{{ item.id }}/{{id}}">Принять</a>
+            <a class="btn btn-danger" href="/application_no/{{ item.id }}/{{id}}"> Отклонить</a>
+        </div>
+    {% endfor %}
+{% endblock %}
