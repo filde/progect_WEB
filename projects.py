@@ -26,3 +26,4 @@ class Projects(SqlAlchemyBase):
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     user = orm.relation('User')
     active = sqlalchemy.Column(sqlalchemy.Boolean, default=True)
+    applications = sqlalchemy.Column(sqlalchemy.String, nullable=True)
