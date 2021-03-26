@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request, make_response, jsonify
-from data import db_session
+from data import db_session, projects_resource, users_resource
 from data.users import User
 from data.projects import Projects
 from password_check import *
@@ -13,11 +13,21 @@ from flask_restful import reqparse, abort, Api, Resource
 
 
 app = Flask(__name__)
+api = Api(app)
+api.add_resource(projects_resource.ProjectsListResource, '/api/projects') 
+api.add_resource(projects_resource.ProjectsResource, '/api/projects/<int:projects_id>')
+api.add_resource(users_resource.UsersListResource, '/api/users') 
+api.add_resource(users_resource.UsersResource, '/api/users/<int:users_id>')
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
 db_sess = ''
 
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+    
 
 def main():
     global db_sess
@@ -38,11 +48,11 @@ def reqister():
     global db_sess
     form = RegisterForm()
     if form.validate_on_submit():
-        #st = check_new_password(form.password.data)
-        #if st:
-        #    return render_template('register.html', title='Регистрация',
-        #                           form=form,
-        #                           message=st)
+        st = check_new_password(form.password.data)
+        if st:
+           return render_template('register.html', title='Регистрация',
+                                  form=form,
+                                  message=st)
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
                                    form=form,
@@ -102,9 +112,7 @@ def logout():
 def new_application(project_id):
     global db_sess
     project = db_sess.query(Projects).get(project_id)
-    print(project.applications)
     project.applications.append(current_user)
-    print(project.applications)
     if len(project.users) == project.count:
         project.active = False
     db_sess.commit()
@@ -186,7 +194,8 @@ def applications(proj_id):
     global db_sess
     project = db_sess.query(Projects).filter(Projects.id == proj_id, Projects.leader == current_user,
                                              Projects.active).first()
-    if project and len(project.applications) < project.count:
+    print(project)
+    if project:
         people = project.applications
         return render_template('applications.html', title='Заявки на участие в проекте',
                                people=people, id=proj_id)
@@ -232,9 +241,6 @@ def application_no(user_id, project_id):
 def delete_member(user_id, project_id):
     project = db_sess.query(Projects).filter(Projects.id == project_id, Projects.leader == current_user).first()
     user = db_sess.query(User).get(user_id)
-    print(user)
-    print(project)
-    print(project in user.projects)
     if user and project and project in user.projects:
         user.projects.remove(project)
         if len(project.users) < project.count:
@@ -295,6 +301,10 @@ def edit_project(id):
             project.title = form.title.data
             project.count = form.count.data
             project.about = form.about.data
+            if len(project.users) == form.count.data:
+                project.active = False
+            else:
+                project.active = True
             db_sess.commit()
             return redirect('/projects')
         else:
@@ -309,7 +319,6 @@ def edit_project(id):
 @login_required
 def my_applications():
     projects = current_user.applications
-    print(projects)
     return render_template('my_applications.html', title='Отправленные заявки', projects=projects)
 
 

@@ -14,7 +14,9 @@
             <ol>
                 {% for i in item.users %}
                 <li><a href="/persona/{{ i.id }}">{{ i.surname }} {{i.name}}</a>
+                    {% if current_user.is_authenticated and current_user == item.leader %}
                     <a class="btn btn-danger" href="/delete_member/{{ i.id }}/{{ item.id }}">Исключить</a>
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ol>
@@ -25,8 +27,10 @@
                 {% endif %}
                 <a class="btn btn-warning" href="/edit_project/{{ item.id }}">Редактировать</a>
                 <a class="btn btn-danger" href="/delete/{{ item.id }}">Удалить</a>
+            {% else %}
+                <a class="btn btn-danger" href="/out_project/{{ item.id }}">Отказаться от участия</a>
             {% endif %}
         </div>
     {% endfor %}
-    <a class="btn btn-success" href="/new_project">Новый проект</a>
+    <p><a class="btn btn-success" href="/new_project">Новый проект</a></p>
 {% endblock %}
