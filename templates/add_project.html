@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<a class="btn btn-secondary" href="/projects/{{ current_user.id }}">Назад</a>
+<a class="btn btn-secondary" href="/projects">Назад</a>
 <h1>{{ name }}</h1>
 <form action="" method="post">
     {{ form.hidden_tag() }}

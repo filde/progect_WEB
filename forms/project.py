@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired
 
 
 class ProjectsForm(FlaskForm):
-    title = StringField('Почта', validators=[DataRequired()])
+    title = StringField('Название', validators=[DataRequired()])
     count = IntegerField('Количество участников', validators=[DataRequired()])
     about = TextAreaField("О проекте")
     submit = SubmitField('Готово')

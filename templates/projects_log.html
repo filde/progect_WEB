@@ -9,10 +9,10 @@
             <p>{{ item.about }}</p>
             <p>Лидер: <a href='/persona/{{ item.team_lead }}'>{{ item.leader.surname }} {{ item.leader.name }}</a></p>
             {% if current_user.is_authenticated and current_user in item.users %}
-                <p color="color: green">Вы являетесь участником проекта</p>
+                <p style="color: green">Вы являетесь участником проекта</p>
             {% elif current_user.is_authenticated and current_user in item.applications%}
                 <p style="color: green;">Заявка отправлена</p>
-            {% elif current_user.is_authenticated and current_user != item.user %}
+            {% elif current_user.is_authenticated and current_user != item.leader %}
                 <a class='btn btn-success' href='/new_application/{{ item.id }}'>Подать заявку</a>
             {% endif %}
         </div>

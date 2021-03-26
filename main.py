@@ -38,11 +38,11 @@ def reqister():
     global db_sess
     form = RegisterForm()
     if form.validate_on_submit():
-        st = check_new_password(form.password.data)
-        if st:
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message=st)
+        #st = check_new_password(form.password.data)
+        #if st:
+        #    return render_template('register.html', title='Регистрация',
+        #                           form=form,
+        #                           message=st)
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
                                    form=form,
@@ -102,14 +102,17 @@ def logout():
 def new_application(project_id):
     global db_sess
     project = db_sess.query(Projects).get(project_id)
+    print(project.applications)
     project.applications.append(current_user)
+    print(project.applications)
     if len(project.users) == project.count:
         project.active = False
+    db_sess.commit()
     return redirect("/")
 
 
 @app.route('/persona/<int:user_id>')
-def persona():
+def persona(user_id):
     global db_sess
     user = db_sess.query(User).get(user_id)
     return render_template('persona.html', title=user.surname + ' ' + user.name,
@@ -118,7 +121,7 @@ def persona():
 
 @app.route('/edit_user', methods=['GET', 'POST'])
 @login_required
-def edit_user(id):
+def edit_user():
     global db_sess
     form = UserForm()
     if request.method == "GET":
@@ -128,13 +131,13 @@ def edit_user(id):
             form.surname.data = user.surname
             form.name.data = user.name
             form.age.data = user.age
-            form.about.data = jobs.about
+            form.about.data = user.about
         else:
             abort(404)
     if form.validate_on_submit():
         user = current_user
         if user:
-            if db_sess.query(User).filter(User.email == form.email.data, User != current_user).first():
+            if db_sess.query(User).filter(User.email == form.email.data, User.id != current_user.id).first():
                 return render_template('user.html', title='Редактирование профиля',
                                     form=form,
                                     message="Пользователь с такой почтой уже есть")
@@ -158,7 +161,7 @@ def edit_user(id):
 
 @app.route('/projects')
 @login_required
-def my_projects(user_id):
+def my_projects():
     global db_sess
     projects = current_user.project + current_user.projects
     return render_template('projects.html', title='Мои проекты', projects=projects)
@@ -168,20 +171,20 @@ def my_projects(user_id):
 @login_required
 def projects_delete(id):
     global db_sess
-    projects = db_sess.query(Projects).filter(Projects.id == id, Projects.user == current_user).first()
+    projects = db_sess.query(Projects).filter(Projects.id == id, Projects.leader == current_user).first()
     if projects:
         db_sess.delete(projects)
         db_sess.commit()
     else:
         abort(404)
-    return redirect('/projects/' + str(current_user.id))
+    return redirect('/projects')
 
 
 @app.route('/applications/<int:proj_id>')
 @login_required
 def applications(proj_id):
     global db_sess
-    project = db_sess.query(Projects).filter(Projects.id == proj_id, Projects.user == current_user,
+    project = db_sess.query(Projects).filter(Projects.id == proj_id, Projects.leader == current_user,
                                              Projects.active).first()
     if project and len(project.applications) < project.count:
         people = project.applications
@@ -202,8 +205,10 @@ def application_yes(user_id, project_id):
         user.projects.append(project)
         if len(project.users) == project.count:
             project.active = False
-            return redirect('/projects/' + str(current_user.id))
-        return redirect('/applications/' + str(current_user.id))
+            db_sess.commit()
+            return redirect('/projects')
+        db_sess.commit()
+        return redirect('/applications/' + str(project_id))
     else:
         abort(404)
 
@@ -216,7 +221,8 @@ def application_no(user_id, project_id):
     user = db_sess.query(User).get(user_id)
     if user and project and user in project.applications:
         project.applications.remove(user)
-        return redirect('/applications/' + str(current_user.id))
+        db_sess.commit()
+        return redirect('/applications/' + str(project_id))
     else:
         abort(404)
 
@@ -224,13 +230,17 @@ def application_no(user_id, project_id):
 @app.route('/delete_member/<int:user_id>/<int:project_id>')
 @login_required
 def delete_member(user_id, project_id):
-    project = db_sess.query(Projects).filter(Projects.id == project_id, Projects.leader == current_user)
+    project = db_sess.query(Projects).filter(Projects.id == project_id, Projects.leader == current_user).first()
     user = db_sess.query(User).get(user_id)
+    print(user)
+    print(project)
+    print(project in user.projects)
     if user and project and project in user.projects:
         user.projects.remove(project)
         if len(project.users) < project.count:
             project.active = True
-        return redirect('/projects/' + str(current_user.id))
+        db_sess.commit()
+        return redirect('/projects')
     else:
         abort(404)
 
@@ -253,18 +263,18 @@ def new_project():
         current_user.project.append(projects)
         db_sess.merge(current_user)
         db_sess.commit()
-        return redirect('/projects/' + str(current_user.id))
+        return redirect('/projects')
     return render_template('add_project.html', title='Новый проект', 
                            form=form, name='Новый проект')
 
 
-@app.route('/edit_project/<int:project_id>', methods=['GET', 'POST'])
+@app.route('/edit_project/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_project(id):
     global db_sess
     form = ProjectsForm()
     if request.method == "GET":
-        project = db_sess.query(Projects).filter(Jobs.id == id, Projects.user == current_user).first()
+        project = db_sess.query(Projects).filter(Projects.id == id, Projects.leader == current_user).first()
         if project:
             form.title.data = project.title
             form.count.data = project.count
@@ -272,7 +282,7 @@ def edit_project(id):
         else:
             abort(404)
     if form.validate_on_submit():
-        project = db_sess.query(Projects).filter(Jobs.id == id, Projects.user == current_user).first()
+        project = db_sess.query(Projects).filter(Projects.id == id, Projects.leader == current_user).first()
         if project:
             if form.count.data < 1:
                 return render_template('add_project.html', title='Редактирование проекта', form=form,
@@ -286,7 +296,7 @@ def edit_project(id):
             project.count = form.count.data
             project.about = form.about.data
             db_sess.commit()
-            return redirect('/projects/' + str(current_user.id))
+            return redirect('/projects')
         else:
             abort(404)
     return render_template('add_project.html',
@@ -299,7 +309,8 @@ def edit_project(id):
 @login_required
 def my_applications():
     projects = current_user.applications
-    return render_template('my_applicatons.html', title='Отправленные заявки', applications=applications)
+    print(projects)
+    return render_template('my_applications.html', title='Отправленные заявки', projects=projects)
 
 
 @app.route('/cansel/<int:project_id>')
@@ -309,6 +320,7 @@ def cansel(project_id):
     project = db_sess.query(Projects).get(project_id)
     if project and current_user in project.applications:
         project.applications.remove(current_user)
+        db_sess.commit()
         return redirect('/my_applications')
     else:
         abort(404)

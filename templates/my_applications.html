@@ -2,7 +2,7 @@
 
 {% block content %}
 <a class="btn btn-secondary" href="/persona/{{ current_user.id }}">Назад</a>
-    <h1 class="text-center">Проекты</h1>
+    <h1 class="text-center">Мои заявки</h1>
     {% for item in projects%}
         <div>
             <h3>{{ item.title }}</h3>
