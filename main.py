@@ -335,5 +335,20 @@ def cansel(project_id):
         abort(404)
 
 
+@app.route('/out_project/<int:project_id>')
+@login_required
+def out_project(project_id):
+    global db_sess
+    project = db_sess.query(Projects).get(project_id)
+    if project and current_user in project.users:
+        project.users.remove(current_user)
+        if len(projects.users) < project:
+            projects.active = True
+        db_sess.commit()
+        return redirect('/projects')
+    else:
+        abort(404)
+
+
 if __name__ == '__main__':
     main()
