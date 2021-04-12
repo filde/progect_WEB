@@ -1,20 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1 class="text-center">Проекты</h1>
-    {% for item in projects%}
-        <div>
-            <h3>{{ item.title }}</h3>
-            <p>Описание:</p>
-            <p>{{ item.about }}</p>
-            <p>Лидер: <a href='/persona/{{ item.team_lead }}'>{{ item.leader.surname }} {{ item.leader.name }}</a></p>
-            {% if current_user.is_authenticated and current_user in item.users %}
-                <p style="color: green">Вы являетесь участником проекта</p>
-            {% elif current_user.is_authenticated and current_user in item.applications%}
-                <p style="color: green;">Заявка отправлена</p>
-            {% elif current_user.is_authenticated and current_user != item.leader %}
-                <a class='btn btn-success' href='/new_application/{{ item.id }}'>Подать заявку</a>
-            {% endif %}
+    <div class='grid'>
+        <h1 class="text-center grid">Проекты</h1>
+        <div class="images">
+            <p><a href="#" class='img1 img'><img alt='...' src="{{ url_for('static', filename='img/Pygame.png') }}"></a></p>
+            <p><a href="#" class="img2 img"><img alt='...' src="{{ url_for('static', filename='img/QT.png') }}"></a></p>
         </div>
-    {% endfor %}
+        <div class="main">
+            {% for item in projects%}
+                <div class='block'>
+                    <h3 class="text-center title">{{ item.title }}</h3>
+                    <div class="text-about">
+                    <p class="about-title text-title">Описание:</p>
+                    {% if item.about %}
+                        <p class="about bg-light content">{{ item.about }}</p>
+                    {% else %}
+                        <p class="about bg-light content">Нет</p>
+                    {% endif %}
+                    <p class="leader-title text-title">Лидер:</p>
+                    <p class="leader content"><a href='/persona/{{ item.team_lead }}'>{{ item.leader.surname }} {{ item.leader.name }}</a></p>
+                    </div>
+                    {% if current_user.is_authenticated and current_user == item.leader%}
+                        <p style="color: green">Вы - лидер проекта</p>
+                    {% elif current_user.is_authenticated and current_user in item.users %}
+                        <p style="color: green">Вы являетесь участником проекта</p>
+                    {% elif current_user.is_authenticated and current_user in item.applications%}
+                        <p style="color: green;">Заявка отправлена</p>
+                    {% elif current_user.is_authenticated and current_user != item.leader %}
+                        <a class='btn application' href='/new_application/{{ item.id }}'>Подать заявку</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

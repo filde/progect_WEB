@@ -1,18 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-<a class="btn btn-secondary" href="/">На главную</a>
-    <h1 class="text-center">{{ user.surname }} {{user.name}}</h1>
-    <p>Почта: {{ user.email }}</p>
-    <p>Фамилия: {{ user.surname }}</p>
-    <p>Имя: {{ user.name }}</p>
-    <p>Возраст: {{ user.age }} лет</p>
-    <p>О себе:</p>
-    <p>{{ user.about }}</p>
+<div class="grid profile">
+<a class="btn cansel grid" href="/">На главную</a>
+<h1 class="text-center grid profile">{{ user.surname }} {{user.name}}</h1>
+</div>
+    <div class="block text-about">
+    <p class="mail-title text-title">Почта:</p>
+    <p class="mail content">{{ user.email }}</p>
+    <p class="surname-title text-title">Фамилия:</p>
+    <p class="surname content">{{ user.surname }}</p>
+    <p class="name-title text-title">Имя:</p>
+    <p class="name content">{{ user.name }}</p>
+    <p class="age-title text-title">Возраст:</p>
+    <p class="age content">{{ user.age }}</p>
+    <p class="about-title text-title">О себе:</p>
+    {% if user.about %}
+        <p class="about content bg-light">{{ user.about }}</p>
+    {% else %}
+        <p class="about content bg-light">Нет</p>
+    {% endif %}
+    </div>
+    <div class="buttons">
     {% if user == current_user %}
-        <a href="/edit_user" class="btn btn-success">Редактировать</a>
-        <a href="/projects" class="btn btn-success">Мои проекты</a>
-        <a href="/my_applications" class="btn btn-success">Мои заявки</a>
+        <a href="/edit_user" class="btn profile">Редактировать</a>
+        <a href="/projects" class="btn profile">Мои проекты</a>
+        <a href="/my_applications" class="btn profile">Мои заявки</a>
         <a href="/logout" class="btn btn-danger">Выйти</a>
     {% endif %}
+    </div>
 {% endblock %}
