@@ -1,22 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-<a class="btn btn-secondary" href="/persona/{{ current_user.id }}">Назад</a>
-    <h1 class="text-center">Мои проекты</h1>
+    <div class="grid profile">
+    <a class="btn cansel grid" href="/persona/{{ current_user.id }}">Назад</a>
+    <h1 class="text-center grid profile">Мои проекты</h1>
+    </div>
     {% for item in projects%}
-        <div>
-            <h3>{{ item.title }}</h3>
-            <p>Описание:</p>
-            <p>{{ item.about }}</p>
-            <p>Лидер: <a href="/persona/{{ item.team_lead }}">{{ item.leader.surname }} {{ item.leader.name }}</a></p>
+    <div class='block'>
+        <h3 class="text-center title">{{ item.title }}</h3>
+        <div class="text-about">
+            <p class="about-title text-title">Описание:</p>
+            {% if item.about %}
+                <p class="about bg-light content">{{ item.about }}</p>
+            {% else %}
+                <p class="about bg-light content" style="color: rgb(189, 189, 189)">Нет</p>
+            {% endif %}
+            <p class="leader-title text-title">Лидер:</p>
+            <p class="leader content"><a href='/persona/{{ item.team_lead }}'>{{ item.leader.surname }} {{ item.leader.name }}</a></p>
+        </div>
             {% if item.users %}
-            <p>Участники:</p>
+            <p class="text-title">Участники:</p>
             <ol>
                 {% for i in item.users %}
-                <li><a href="/persona/{{ i.id }}">{{ i.surname }} {{i.name}}</a>
+                <li><p class="content"><a class="name" href="/persona/{{ i.id }}">{{ i.surname }} {{i.name}}</a>
                     {% if current_user.is_authenticated and current_user == item.leader %}
-                    <a class="btn btn-danger" href="/delete_member/{{ i.id }}/{{ item.id }}">Исключить</a>
+                    <a class="btn btn-danger out" href="/delete_member/{{ i.id }}/{{ item.id }}">Исключить</a>
                     {% endif %}
+                    </p>
                 </li>
                 {% endfor %}
             </ol>

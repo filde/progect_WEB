@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Редактирование профиля</h1>
+<div class="grid profile">
+    <a class="btn cansel grid" href="/persona/{{ current_user.id }}">Назад</a>
+    <h1 class="text-center grid profile">Редактирование профиля</h1>
+    </div>
 <form action="" method="post">
     {{ form.hidden_tag() }}
     <p>

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-<a class="btn btn-secondary" href="/projects">Назад</a>
-<h1>{{ name }}</h1>
+<div class="grid profile">
+    <a class="btn cansel grid" href="/projects">Назад</a>
+    <h1 class="text-center grid profile">{{ name }}</h1>
+    </div>
 <form action="" method="post">
     {{ form.hidden_tag() }}
     <p>

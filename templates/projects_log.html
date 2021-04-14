@@ -16,7 +16,7 @@
                     {% if item.about %}
                         <p class="about bg-light content">{{ item.about }}</p>
                     {% else %}
-                        <p class="about bg-light content">Нет</p>
+                        <p class="about bg-light content" style="color: rgb(189, 189, 189)">Нет</p>
                     {% endif %}
                     <p class="leader-title text-title">Лидер:</p>
                     <p class="leader content"><a href='/persona/{{ item.team_lead }}'>{{ item.leader.surname }} {{ item.leader.name }}</a></p>
