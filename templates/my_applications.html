@@ -11,9 +11,9 @@
             <div class="text-about">
             <p class="about-title text-title">Описание:</p>
             {% if item.about %}
-                <p class="about bg-light content">{{ item.about }}</p>
+                <textarea class="about content" readonly>{{ item.about }}</textarea>
             {% else %}
-                <p class="about bg-light content" style="color: rgb(189, 189, 189)">Нет</p>
+                <textarea class="about content" style="color: rgb(189, 189, 189)" readonly>Нет</textarea>
             {% endif %}
             <p class="leader-title text-title">Лидер:</p>
             <p class="leader content"><a href='/persona/{{ item.team_lead }}'>{{ item.leader.surname }} {{ item.leader.name }}</a></p>

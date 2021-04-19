@@ -16,9 +16,9 @@
     <p class="age content">{{ user.age }}</p>
     <p class="about-title text-title">О себе:</p>
     {% if user.about %}
-        <p class="about content bg-light">{{ user.about }}</p>
+        <textarea class="about content" readonly>{{ user.about }}</textarea>
     {% else %}
-        <p class="about content bg-light" style="color: rgb(189, 189, 189)">Нет</p>
+        <textarea class="about content" style="color: rgb(189, 189, 189)" readonly>Нет</textarea>
     {% endif %}
     </div>
     <div class="buttons">

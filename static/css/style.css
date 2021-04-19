@@ -71,13 +71,12 @@ p.about-title {
     grid-row: 1/ 2;
 }
 
-p.about {
+textarea.about {
     grid-row: 1 / 2;
     font-size: 18px;
-    border: 1px solid black;
     padding: 0 5px;
-    border-radius: 5px;
     margin-top: 0px;
+    margin-bottom: 10px;
 }
 
 div.text-about {
@@ -99,7 +98,7 @@ p.leader {
     grid-row: 2 / 3;
 }
 
-p.content {
+.content {
     grid-column: 2 / 3;
     font-size: 17px;
     margin-top: 3px;
@@ -182,7 +181,7 @@ p.age-title, p.age {
     grid-row: 4 / 5;
 }
 
-p.about-title, p.about {
+p.about-title, textarea.about {
     grid-row: 5 / 6;
 }
 
@@ -193,4 +192,8 @@ a.cansel-application {
 li > p.content > a.out {
     margin: 0;
     margin-left: 10px;
+}
+
+textarea.about {
+    cursor: default;
 }

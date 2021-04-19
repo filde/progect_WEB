@@ -15,9 +15,9 @@
                 <p class="mail content">{{ item.email }}</p>
                 <p class="about-title text-title">О себе:</p>
                 {% if item.about %}
-                    <p class="about bg-light content">{{ item.about }}</p>
+                    <textarea class="about content" readonly>{{ item.about }}</textarea>
                 {% else %}
-                    <p class="about bg-light content" style="color: rgb(189, 189, 189)">Нет</p>
+                    <textarea class="about content" readonly style="color: rgb(189, 189, 189)">Нет</textarea>
                 {% endif %}
             </div>
             <a class="btn btn-success" href="/application_yes/{{ item.id }}/{{id}}">Принять</a>
