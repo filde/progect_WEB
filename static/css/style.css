@@ -197,3 +197,8 @@ li > p.content > a.out {
 textarea.about {
     cursor: default;
 }
+
+a.head {
+    text-decoration: none;
+    color:black
+}
