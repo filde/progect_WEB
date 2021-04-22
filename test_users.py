@@ -1,4 +1,4 @@
-from requests import get, post, delete, put
+from requests import get, post, delete, put # Файл для проверки работоспособности API для пользователей
 
 
 print(get('http://localhost:5000/api/users').json())

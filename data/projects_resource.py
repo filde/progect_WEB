@@ -1,4 +1,4 @@
-from flask_restful import reqparse, abort, Api, Resource
+from flask_restful import reqparse, abort, Api, Resource # API для проектов
 from flask import jsonify
 from .projects import Projects
 from . import db_session
@@ -19,7 +19,7 @@ def abort_if_projects_not_found(projects_id):
         abort(404, message=f"Projects {projects_id} not found")
 
 
-class ProjectsResource(Resource):
+class ProjectsResource(Resource): # Действие для одного проекта
     def get(self, projects_id):
         abort_if_projects_not_found(projects_id)
         session = db_session.create_session()
@@ -51,7 +51,7 @@ class ProjectsResource(Resource):
         return jsonify({'success': 'OK'})
 
 
-class ProjectsListResource(Resource):
+class ProjectsListResource(Resource): # Действие для группы проектов
     def get(self):
         session = db_session.create_session()
         projects = session.query(Projects).all()

@@ -10,10 +10,12 @@ from forms.user import UserForm
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from requests import get
 from flask_restful import reqparse, abort, Api, Resource
+from flask_ngrok import run_with_ngrok
 
 
 app = Flask(__name__)
 api = Api(app)
+run_with_ngrok(app)
 api.add_resource(projects_resource.ProjectsListResource, '/api/projects') 
 api.add_resource(projects_resource.ProjectsResource, '/api/projects/<int:projects_id>')
 api.add_resource(users_resource.UsersListResource, '/api/users') 
@@ -24,26 +26,26 @@ login_manager.init_app(app)
 db_sess = ''
 
 
-@app.errorhandler(404)
+@app.errorhandler(404) # Обработка ошибки вызываемой API
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
     
 
-def main():
+def main(): # Подключение к базе данных и запуск сервера
     global db_sess
     db_session.global_init("db/blogs.db")
     db_sess = db_session.create_session()
     app.run()
 
 
-@app.route("/")
+@app.route("/") # Главная страница с проектами
 def index():
     global db_sess
     projects = db_sess.query(Projects).filter(Projects.active)
     return render_template("projects_log.html", projects=projects, title="Проекты")
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST']) # Регистрация пользователя
 def reqister():
     global db_sess
     form = RegisterForm()
@@ -85,7 +87,7 @@ def load_user(user_id):
     return db_sess.query(User).get(user_id)
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST']) # Страница для ввода логина и пароля
 def login():
     global db_sess
     form = LoginForm()
@@ -100,14 +102,14 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-@app.route('/logout')
+@app.route('/logout') # Выход из учётной записи
 @login_required
 def logout():
     logout_user()
     return redirect("/")
 
 
-@app.route('/new_application/<int:project_id>')
+@app.route('/new_application/<int:project_id>') # Создание новой заявки на участие в проекте
 @login_required
 def new_application(project_id):
     global db_sess
@@ -119,7 +121,7 @@ def new_application(project_id):
     return redirect("/")
 
 
-@app.route('/persona/<int:user_id>')
+@app.route('/persona/<int:user_id>') # Профиль пользователя
 def persona(user_id):
     global db_sess
     user = db_sess.query(User).get(user_id)
@@ -127,7 +129,7 @@ def persona(user_id):
                            user=user)
 
 
-@app.route('/edit_user', methods=['GET', 'POST'])
+@app.route('/edit_user', methods=['GET', 'POST']) # Изменение профиля пользователя
 @login_required
 def edit_user():
     global db_sess
@@ -167,7 +169,7 @@ def edit_user():
                            form=form)
 
 
-@app.route('/projects')
+@app.route('/projects') # Страница с проектами, в которых пользователь участвует(в том числе является лидером)
 @login_required
 def my_projects():
     global db_sess
@@ -175,7 +177,7 @@ def my_projects():
     return render_template('projects.html', title='Мои проекты', projects=projects)
 
 
-@app.route('/delete/<int:id>', methods=['GET', 'POST'])
+@app.route('/delete/<int:id>', methods=['GET', 'POST']) # Удаление проекта
 @login_required
 def projects_delete(id):
     global db_sess
@@ -188,7 +190,7 @@ def projects_delete(id):
     return redirect('/projects')
 
 
-@app.route('/applications/<int:proj_id>')
+@app.route('/applications/<int:proj_id>') # Заявки на участие в конкретном проекте
 @login_required
 def applications(proj_id):
     global db_sess
@@ -203,7 +205,7 @@ def applications(proj_id):
         abort(404)
 
 
-@app.route('/application_yes/<int:user_id>/<int:project_id>')
+@app.route('/application_yes/<int:user_id>/<int:project_id>') # Принятие заявки на участие в проекте его лидером
 @login_required
 def application_yes(user_id, project_id):
     global db_sess
@@ -222,7 +224,7 @@ def application_yes(user_id, project_id):
         abort(404)
 
 
-@app.route('/application_no/<int:user_id>/<int:project_id>')
+@app.route('/application_no/<int:user_id>/<int:project_id>') # Отклонение заявки на участие в проекте его лидером
 @login_required
 def application_no(user_id, project_id):
     global db_sess
@@ -236,7 +238,7 @@ def application_no(user_id, project_id):
         abort(404)
 
 
-@app.route('/delete_member/<int:user_id>/<int:project_id>')
+@app.route('/delete_member/<int:user_id>/<int:project_id>') # Исключение участника из проекта его лидером
 @login_required
 def delete_member(user_id, project_id):
     project = db_sess.query(Projects).filter(Projects.id == project_id, Projects.leader == current_user).first()
@@ -251,7 +253,7 @@ def delete_member(user_id, project_id):
         abort(404)
 
 
-@app.route('/new_project',  methods=['GET', 'POST'])
+@app.route('/new_project',  methods=['GET', 'POST']) # Создание нового проекта
 @login_required
 def new_project():
     global db_sess
@@ -274,7 +276,7 @@ def new_project():
                            form=form, name='Новый проект')
 
 
-@app.route('/edit_project/<int:id>', methods=['GET', 'POST'])
+@app.route('/edit_project/<int:id>', methods=['GET', 'POST']) # Редактирование проекта
 @login_required
 def edit_project(id):
     global db_sess
@@ -296,7 +298,7 @@ def edit_project(id):
                                        name='Редактирование проекта')
             if form.count.data < len(project.users):
                 return render_template('add_project.html', title='Редактирование проекта', form=form,
-                                       message='Не может быть количество участников быть меньше того, которое уже участвует в проекте',
+                                       message='Не может быть количество участников меньше того, которое уже участвует в проекте',
                                        name='Редактирование проекта')
             project.title = form.title.data
             project.count = form.count.data
@@ -315,14 +317,14 @@ def edit_project(id):
                            form=form)
 
 
-@app.route('/my_applications')
+@app.route('/my_applications') # Заявки пользователя на участие в других проектах
 @login_required
 def my_applications():
     projects = current_user.applications
     return render_template('my_applications.html', title='Отправленные заявки', projects=projects)
 
 
-@app.route('/cansel/<int:project_id>')
+@app.route('/cansel/<int:project_id>') # Отменя заявки на участие в проекте
 @login_required
 def cansel(project_id):
     global db_sess
@@ -335,7 +337,7 @@ def cansel(project_id):
         abort(404)
 
 
-@app.route('/out_project/<int:project_id>')
+@app.route('/out_project/<int:project_id>') # Отказ пользователя от участия в проекте
 @login_required
 def out_project(project_id):
     global db_sess

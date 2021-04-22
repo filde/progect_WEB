@@ -1,4 +1,4 @@
-from flask_restful import reqparse, abort, Api, Resource
+from flask_restful import reqparse, abort, Api, Resource # API для пользователей
 from flask import jsonify
 from .users import User
 from . import db_session
@@ -20,7 +20,7 @@ def abort_if_users_not_found(users_id):
         abort(404, message=f"User {users_id} not found")
 
 
-class UsersResource(Resource):
+class UsersResource(Resource): # Действия для одного пользователя
     def get(self, users_id):
         abort_if_users_not_found(users_id)
         session = db_session.create_session()
@@ -53,7 +53,7 @@ class UsersResource(Resource):
         return jsonify({'success': 'OK'})
 
 
-class UsersListResource(Resource):
+class UsersListResource(Resource): # Действия для группы пользователей
     def get(self):
         session = db_session.create_session()
         user = session.query(User).all()

@@ -7,8 +7,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy_serializer import SerializerMixin
 
 
-association_table_2 = sqlalchemy.Table(
-    'projects_applications',
+association_table_2 = sqlalchemy.Table( # Вспомогательная таблица, чтобы знать,
+    'projects_applications',            # в какие проекты пользователь подал заявки
     SqlAlchemyBase.metadata,
     sqlalchemy.Column('users', sqlalchemy.Integer,
                       sqlalchemy.ForeignKey('users.id')),
@@ -17,7 +17,7 @@ association_table_2 = sqlalchemy.Table(
 )
 
 
-class User(SqlAlchemyBase, UserMixin, SerializerMixin):
+class User(SqlAlchemyBase, UserMixin, SerializerMixin): # Таблица с пользователями
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, 

@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired
 
 
 
-class UserForm(FlaskForm):
+class UserForm(FlaskForm): # Форма для создания и редактирования профиля пользователя
     email = StringField('Почта', validators=[DataRequired()])
     surname = StringField('Фамилия', validators=[DataRequired()])
     name = StringField('Имя', validators=[DataRequired()])

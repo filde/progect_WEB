@@ -5,8 +5,8 @@ from .db_session import SqlAlchemyBase
 from sqlalchemy import orm
    
 
-association_table = sqlalchemy.Table(
-    'users_to_projects',
+association_table = sqlalchemy.Table( # Вспомогательная таблица для того, чтобы знать, 
+    'users_to_projects',              # какие пользователи в каких проектах участвуют
     SqlAlchemyBase.metadata,
     sqlalchemy.Column('users', sqlalchemy.Integer,
                       sqlalchemy.ForeignKey('users.id')),
@@ -15,7 +15,7 @@ association_table = sqlalchemy.Table(
 )
 
    
-class Projects(SqlAlchemyBase, SerializerMixin):
+class Projects(SqlAlchemyBase, SerializerMixin): # Таблица с проектами
     __tablename__ = 'projects'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, 
                            autoincrement=True)
