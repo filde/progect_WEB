@@ -10,12 +10,10 @@ from forms.user import UserForm
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from requests import get
 from flask_restful import reqparse, abort, Api, Resource
-from flask_ngrok import run_with_ngrok
 
 
 app = Flask(__name__)
 api = Api(app)
-run_with_ngrok(app)
 api.add_resource(projects_resource.ProjectsListResource, '/api/projects') 
 api.add_resource(projects_resource.ProjectsResource, '/api/projects/<int:projects_id>')
 api.add_resource(users_resource.UsersListResource, '/api/users') 
