@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid profile">
+<a class="btn cansel grid" href="/">На главную</a>
+<h1 class="text-center grid profile">{{ user.surname }} {{user.name}}</h1>
+</div>
+    <div class="block text-about">
+    <p class="mail-title text-title">Почта:</p>
+    <p class="mail content">{{ user.email }}</p>
+    <p class="surname-title text-title">Фамилия:</p>
+    <p class="surname content">{{ user.surname }}</p>
+    <p class="name-title text-title">Имя:</p>
+    <p class="name content">{{ user.name }}</p>
+    <p class="age-title text-title">Возраст:</p>
+    <p class="age content">{{ user.age }}</p>
+    <p class="contacts-title text-title">Контакты:</p>
+    <textarea class="contacts content">{{ user.contacts }}</textarea>
+    <p class="about-title text-title">О себе:</p>
+    {% if user.about %}
+        <textarea class="about content" readonly>{{ user.about }}</textarea>
+    {% else %}
+        <textarea class="about content" style="color: rgb(189, 189, 189)" readonly>Нет</textarea>
+    {% endif %}
+    </div>
+    <div class="buttons">
+    {% if user == current_user %}
+        <a href="/edit_user" class="btn profile">Редактировать</a>
+        <a href="/projects" class="btn profile">Мои проекты</a>
+        <a href="/my_applications" class="btn profile">Мои заявки</a>
+        <a href="/logout" class="btn btn-danger">Выйти</a>
+    {% endif %}
+    </div>
+{% endblock %}

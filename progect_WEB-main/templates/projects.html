@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="grid profile">
+    <a class="btn cansel grid" href="/persona/{{ current_user.id }}">Назад</a>
+    <h1 class="text-center grid profile">Мои проекты</h1>
+    </div>
+    {% for item in projects%}
+    <div class='block'>
+        <h3 class="text-center title">{{ item.title }}</h3>
+        <div class="text-about">
+            <p class="about-title text-title">Описание:</p>
+            {% if item.about %}
+                <textarea class="about content" readonly>{{ item.about }}</textarea>
+            {% else %}
+                <textarea class="about content" style="color: rgb(189, 189, 189)" readonly>Нет</textarea>
+            {% endif %}
+            <p class="leader-title text-title">Лидер:</p>
+            <p class="leader content"><a href='/persona/{{ item.team_lead }}'>{{ item.leader.surname }} {{ item.leader.name }}</a></p>
+        </div>
+            {% if item.users %}
+            <p class="text-title">Участники:</p>
+            <ol>
+                {% for i in item.users %}
+                <li><p class="content"><a class="name" href="/persona/{{ i.id }}">{{ i.surname }} {{i.name}}</a>
+                    {% if current_user.is_authenticated and current_user == item.leader %}
+                    <a class="btn btn-danger out" href="/delete_member/{{ i.id }}/{{ item.id }}">Исключить</a>
+                    {% endif %}
+                    </p>
+                </li>
+                {% endfor %}
+            </ol>
+            {% endif %}
+            {% if current_user.is_authenticated and current_user == item.leader %}
+                {% if item.active %}
+                    <a class="btn btn-success" href="/applications/{{ item.id }}">Посмотреть заявки</a>
+                {% endif %}
+                <a class="btn btn-warning" href="/edit_project/{{ item.id }}">Редактировать</a>
+                <a class="btn btn-danger" href="/delete/{{ item.id }}">Удалить</a>
+            {% else %}
+                <a class="btn btn-danger" href="/out_project/{{ item.id }}">Отказаться от участия</a>
+            {% endif %}
+        </div>
+    {% endfor %}
+    <p><a class="btn btn-success" href="/new_project">Новый проект</a></p>
+{% endblock %}

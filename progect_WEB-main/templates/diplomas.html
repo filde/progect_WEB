@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid profile">
+<a class="btn cansel grid" href="/persona/{{ user.id }}">Назад</a>
+<h1 class="text-center grid profile">Награды пользователя {{ user.surname }} {{user.name}}</h1>
+</div>
+    <div class="diploma">
+        {% for item in files %}
+            <p>
+                <img src="{{ url_for('static', filename='img/' + str(user.id) + '/' + item) }}" alt='...'>
+            </p>
+        {% endfor %}
+    </div>
+    <div class="buttons">
+    {% if user == current_user %}
+        <a href="/new_diploma" class="btn profile">Добавить награду</a>
+    {% endif %}
+    </div>
+{% endblock %}

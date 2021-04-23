@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid profile">
+    <a class="btn cansel grid" href="/projects">Назад</a>
+    <h1 class="text-center grid profile">Заявки на участие в проекте</h1>
+    </div>
+    {% for item in people%}
+        <div class='block'>
+            <h3 class="text-center title">{{ item.surname }} {{ item.name }}</h3>
+            <div class="text-about">
+                <p class="age-title text-title">Возраст:</p>
+                <p class="age content">{{ item.age }}</p>
+                <p class="mail-title text-title">Почта:</p>
+                <p class="mail content">{{ item.email }}</p>
+                <p class="about-title text-title">О себе:</p>
+                {% if item.about %}
+                    <textarea class="about content" readonly>{{ item.about }}</textarea>
+                {% else %}
+                    <textarea class="about content" readonly style="color: rgb(189, 189, 189)">Нет</textarea>
+                {% endif %}
+            </div>
+            <a class="btn btn-success" href="/application_yes/{{ item.id }}/{{id}}">Принять</a>
+            <a class="btn btn-danger" href="/application_no/{{ item.id }}/{{id}}"> Отклонить</a>
+        </div>
+    {% endfor %}
+{% endblock %}
