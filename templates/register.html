@@ -59,6 +59,15 @@
         {% endfor %}
     </p>
     <p>
+        {{ form.contacts.label }}<br>
+        {{ form.contacts(class="form-control") }}<br>
+        {% for error in form.contacts.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
         {{ form.about.label }}<br>
         {{ form.about(class="form-control") }}<br>
         {% for error in form.about.errors %}

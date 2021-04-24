@@ -10,5 +10,6 @@ class UserForm(FlaskForm): # Форма для создания и редакт�
     surname = StringField('Фамилия', validators=[DataRequired()])
     name = StringField('Имя', validators=[DataRequired()])
     age = IntegerField('Возраст', validators=[DataRequired()])
+    contacts = TextAreaField('Контакты')
     about = TextAreaField("Немного о себе")
     submit = SubmitField('Готово')
