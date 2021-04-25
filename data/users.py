@@ -31,6 +31,8 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin): # Таблица с по
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, 
                                      default=datetime.datetime.now)
+    contacts = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    diplomas = orm.relation("Diplomas", back_populates='user')
     project = orm.relation("Projects", back_populates='leader')
     projects = orm.relation('Projects',
                             secondary='users_to_projects',

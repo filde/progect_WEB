@@ -2,13 +2,17 @@ from flask import Flask, render_template, redirect, request, make_response, json
 from data import db_session, projects_resource, users_resource
 from data.users import User
 from data.projects import Projects
+from data.diplomas import Diplomas
 from password_check import *
 from forms.register import RegisterForm
 from forms.login import LoginForm
 from forms.project import ProjectsForm
 from forms.user import UserForm
+from forms.file import File
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from requests import get
+import re
+import os
 from flask_restful import reqparse, abort, Api, Resource
 
 
@@ -48,6 +52,12 @@ def reqister():
     global db_sess
     form = RegisterForm()
     if form.validate_on_submit():
+        regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+        is_valid = re.search(regex, form.email.data)
+        if not is_valid:
+            return render_template('register.html', title='Регистрация',
+                                   form=form,
+                                   message='Неверный формат почты')
         st = check_new_password(form.password.data)
         if st:
            return render_template('register.html', title='Регистрация',
@@ -70,7 +80,8 @@ def reqister():
             name=form.name.data,
             surname=form.surname.data,
             age=form.age.data,
-            about=form.about.data
+            about=form.about.data,
+            contacts=form.contacts.data
         )
         user.set_password(form.password.data)
         db_sess.add(user)
@@ -140,6 +151,7 @@ def edit_user():
             form.name.data = user.name
             form.age.data = user.age
             form.about.data = user.about
+            form.contacts.data = user.contacts
         else:
             abort(404)
     if form.validate_on_submit():
@@ -158,6 +170,7 @@ def edit_user():
             user.name = form.name.data
             user.age = form.age.data
             user.about = form.about.data
+            user.contacts = form.contacts.data
             db_sess.commit()
             return redirect('/persona/' + str(current_user.id))
         else:
@@ -346,6 +359,56 @@ def out_project(project_id):
             projects.active = True
         db_sess.commit()
         return redirect('/projects')
+    else:
+        abort(404)
+
+
+@app.route('/galery/<int:user_id>') # Страница с наградами пользователя
+def galery(user_id):
+    global db_sess
+    user = db_sess.query(User).get(user_id)
+    if user:
+        return render_template('galery.html', sp=user.diplomas, user=user, title="Награды") 
+    else:
+        abort(404)
+
+
+
+@app.route('/add_galery', methods=['GET', 'POST']) # Добавление награды
+def add_galery():
+    global db_sess
+    form = File()
+    if form.validate_on_submit():
+        a = db_sess.query(Diplomas).all()
+        if a:
+            ind = max(a, key=lambda x: x.id).id + 1
+        else:
+            ind = 1
+        print(ind)
+        diploma = Diplomas(
+            id=ind,
+            title=form.title.data,
+            address=str(ind) + '.jpg'
+        )
+        with open('static/img/' + diploma.address, 'wb') as img:
+            img.write(form.image.data.read())
+        current_user.diplomas.append(diploma)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/galery/' + str(current_user.id))
+    return render_template('add_galery.html', title='Добавление награды', 
+                           form=form, name='Добавление награды')
+
+
+@app.route('/delete_galery/<int:id>') # Удаление награды
+def delete_galery(id):
+    global db_sess
+    dip = db_sess.query(Diplomas).get(id)
+    if current_user and current_user.id == dip.owner:
+        os.remove('static/img/' + dip.address)
+        db_sess.delete(dip)
+        db_sess.commit()
+        return redirect('/galery/' + str(current_user.id))
     else:
         abort(404)
 

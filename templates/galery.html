@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid profile">
+  <a class="btn cansel grid" href="/persona/{{ user.id }}">Назад</a>
+  <h1 class="text-center grid profile">Наградные документы пользователя <br> {{ user.surname }} {{ user.name }}</h1>
+</div>
+<div class="for-cards">
+  {% for item in sp %}
+  <div class="card" style="width: 20rem;">
+    <img src="{{ url_for('static', filename='img/' + item.address) }}" class="card-img-top" alt="...">
+    <div class="card-body">
+      <h5 class="card-title">{{ item.title }}</h5>
+      {% if current_user and current_user.id == user.id %}
+        <a class="btn btn-danger" href="/delete_galery/{{ item.id }}">Удалить</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% endfor %}
+</div>
+{% if current_user and current_user.id == user.id %}
+  <p style="margin: 20px 50px;"><a class="btn btn-success" href="/add_galery">Добавить</a></p>
+{% endif %}
+{% endblock %}

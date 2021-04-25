@@ -194,11 +194,21 @@ li > p.content > a.out {
     margin-left: 10px;
 }
 
-textarea.about {
+textarea.about, textarea.contacts {
     cursor: default;
 }
 
 a.head {
     text-decoration: none;
     color:black
+}
+
+div.for-cards {
+    display: flex; 
+    flex-wrap: wrap;
+}
+
+div.card {
+    margin-bottom: 30px;
+    margin-left: 40px;
 }

@@ -2,10 +2,10 @@
 
 {% block content %}
 <div class="grid profile">
-    <a class="btn cansel grid" href="/projects">Назад</a>
+    <a class="btn cansel grid" href="/galery/{{ current_user.id }}">Назад</a>
     <h1 class="text-center grid profile">{{ name }}</h1>
     </div>
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data" novalidate class="login_form">
     {{ form.hidden_tag() }}
     <p>
         {{ form.title.label }}<br>
@@ -17,18 +17,9 @@
         {% endfor %}
     </p>
     <p>
-        {{ form.count.label }}<br>
-        {{ form.count(class="form-control") }}<br>
-        {% for error in form.count.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.about.label }}<br>
-        {{ form.about(class="form-control") }}<br>
-        {% for error in form.about.errors %}
+        {{ form.image.label }}<br>
+        {{ form.image(class="form-control") }}<br>
+        {% for error in form.image.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
             </p>

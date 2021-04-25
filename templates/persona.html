@@ -15,7 +15,7 @@
     <p class="age-title text-title">Возраст:</p>
     <p class="age content">{{ user.age }}</p>
     <p class="contacts-title text-title">Контакты:</p>
-    <textarea class="contacts content">{{ user.contacts }}</textarea>
+    <textarea class="contacts content"  readonly>{{ user.contacts }}</textarea>
     <p class="about-title text-title">О себе:</p>
     {% if user.about %}
         <textarea class="about content" readonly>{{ user.about }}</textarea>
@@ -24,6 +24,7 @@
     {% endif %}
     </div>
     <div class="buttons">
+        <a href="/galery/{{ user.id }}" class="btn profile">Достижения</a>
     {% if user == current_user %}
         <a href="/edit_user" class="btn profile">Редактировать</a>
         <a href="/projects" class="btn profile">Мои проекты</a>
